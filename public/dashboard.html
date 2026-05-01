@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lily — Dashboard</title>
+<meta name="description" content="Configure every Lily feature live from your browser — antinuke, automod, welcomer, tickets and more." />
+<link rel="icon" href="/lily.png" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'] } } } };</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  body { background: radial-gradient(900px 500px at 50% -100px, rgba(236,72,153,.12), transparent 60%), #0a0a0a; }
+  .grad-text { background: linear-gradient(90deg,#f9a8d4,#c084fc,#60a5fa); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .nav-blur { backdrop-filter: blur(12px); background: rgba(10,10,10,.6); }
+  .panel { background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01)); border: 1px solid rgba(255,255,255,.07); }
+  .btn-primary { background: linear-gradient(90deg,#ec4899,#c084fc); }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .nav-item { color: #a3a3a3; }
+  .nav-item:hover { background: rgba(255,255,255,.04); color:#fff; }
+  .nav-item.active { background: linear-gradient(90deg, rgba(236,72,153,.18), rgba(192,132,252,.12)); color: #fff; border-left: 3px solid #ec4899; }
+  /* Toggle */
+  .switch { width: 44px; height: 24px; background: rgba(255,255,255,.1); border-radius: 999px; position: relative; cursor: pointer; transition: background .2s; }
+  .switch::after { content:''; position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#fff; transition: transform .2s; }
+  .switch.on { background: linear-gradient(90deg,#ec4899,#c084fc); }
+  .switch.on::after { transform: translateX(20px); }
+  .input { width:100%; background: rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:10px; padding: 8px 12px; font-size: 14px; color:#fff; }
+  .input:focus { outline:none; border-color: rgba(236,72,153,.5); }
+  .toast { position:fixed; bottom: 24px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0; transition: all .25s ease; background:#111; border:1px solid rgba(34,197,94,.4); color:#bbf7d0; padding: 10px 16px; border-radius: 12px; font-size:14px; z-index:100; pointer-events:none; }
+  .toast.show { opacity:1; transform: translateX(-50%) translateY(0); }
+  .ping { display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981; box-shadow: 0 0 0 0 rgba(16,185,129,.6); animation: ping 1.6s infinite; }
+  @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,.6); } 70% { box-shadow: 0 0 0 12px rgba(16,185,129,0); } 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } }
+  .progress { height: 6px; background: rgba(255,255,255,.06); border-radius: 999px; overflow:hidden; }
+  .progress > div { height:100%; background: linear-gradient(90deg,#ec4899,#c084fc); transition: width .3s ease; }
+  .glow-soft { box-shadow: 0 8px 40px rgba(236,72,153,.18); }
+</style>
+</head>
+<body class="text-neutral-100 font-sans antialiased min-h-screen">
+
+<header class="sticky top-0 z-50 nav-blur border-b border-white/5">
+  <div class="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-3">
+      <img src="/lily.png" alt="Lily" class="w-9 h-9 rounded-full ring-2 ring-pink-500/40" />
+      <span class="font-semibold text-lg tracking-tight">lily</span>
+      <span class="ml-3 hidden sm:inline-flex items-center gap-2 text-xs text-emerald-300/90">
+        <span class="ping"></span> bot online
+      </span>
+    </a>
+    <nav class="hidden md:flex items-center gap-8 text-sm text-neutral-300">
+      <a href="/" class="hover:text-white transition">Home</a>
+      <a href="/commands" class="hover:text-white transition">Commands</a>
+      <a href="/dashboard" class="text-white">Dashboard</a>
+      <a href="/premium" class="hover:text-white transition">Premium</a>
+      <a href="https://discord.gg/RYY9SU4uj" target="_blank" rel="noopener" class="hover:text-white transition">Support</a>
+    </nav>
+    <div id="auth-slot" class="flex items-center gap-3">
+      <a href="/api/auth/login?returnTo=/dashboard" id="login-btn"
+         class="btn-primary px-4 py-2 rounded-full text-sm font-medium inline-flex items-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.516.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.249a18.27 18.27 0 0 0-5.487 0 12.6 12.6 0 0 0-.617-1.249.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.029ZM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.418 2.157-2.418 1.21 0 2.176 1.094 2.157 2.418 0 1.334-.956 2.42-2.157 2.42Zm7.974 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.418 2.157-2.418 1.21 0 2.176 1.094 2.157 2.418 0 1.334-.946 2.42-2.157 2.42Z"/></svg>
+        Login with Discord
+      </a>
+      <div id="user-chip" class="hidden items-center gap-3">
+        <img id="user-avatar" alt="" class="w-8 h-8 rounded-full ring-2 ring-pink-500/40" />
+        <span id="user-name" class="text-sm font-medium hidden sm:block"></span>
+        <button id="logout-btn" class="text-xs text-neutral-400 hover:text-white px-2 py-1 rounded-md border border-white/10 hover:bg-white/5">Logout</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="max-w-[1400px] mx-auto px-6 pt-10 pb-6">
+  <p class="text-xs uppercase tracking-widest text-neutral-400">Live dashboard</p>
+  <h1 class="mt-2 text-4xl md:text-5xl font-extrabold tracking-tight">Configure your server <span class="grad-text">in real time</span></h1>
+  <p class="mt-3 text-neutral-400 max-w-2xl">Pick a server, toggle a feature, and Lily applies it instantly. Every change syncs back to the bot the moment you flip a switch.</p>
+</section>
+
+<!-- Server picker bar -->
+<section class="max-w-[1400px] mx-auto px-6 mb-6">
+  <div class="panel rounded-2xl p-4 flex flex-wrap items-center gap-4 glow-soft">
+    <div class="text-xs uppercase tracking-widest text-neutral-400">Active server</div>
+    <select id="server-select" class="input max-w-xs"></select>
+    <button id="add-server" class="text-sm text-pink-300 hover:text-pink-200">+ Add server</button>
+    <div class="ml-auto flex items-center gap-3 text-sm text-neutral-400">
+      <span id="connection-status" class="inline-flex items-center gap-2">
+        <span class="ping"></span> Connected to lily-bot
+      </span>
+    </div>
+  </div>
+</section>
+
+<section class="max-w-[1400px] mx-auto px-6 grid grid-cols-12 gap-6 pb-24">
+  <!-- Sidebar -->
+  <aside class="col-span-12 md:col-span-3">
+    <div class="panel rounded-2xl p-2 sticky top-20" id="sidebar"></div>
+  </aside>
+
+  <!-- Main panel -->
+  <main class="col-span-12 md:col-span-9 space-y-5" id="main"></main>
+</section>
+
+<div id="toast" class="toast">Saved</div>
+
+<script>
+  // ─── Mock state ─────────────────────────────────────────────────────────────
+  const DEFAULT_SERVERS = [
+    { id: 'g_1', name: 'Lily HQ',          icon: '🌸', members: 12480 },
+    { id: 'g_2', name: 'Pixel Pals',       icon: '🎮', members: 3270  },
+    { id: 'g_3', name: 'Lo-fi Lounge',     icon: '🎧', members: 8910  },
+    { id: 'g_4', name: 'Build Club',       icon: '🛠', members: 2150  },
+  ];
+
+  const SECTIONS = [
+    {
+      id: 'antinuke',  label: 'Antinuke',  icon: '🛡', desc: 'Server-killing protection. The most dangerous actions get caught in milliseconds.',
+      fields: [
+        { id: 'enabled',         type: 'toggle', label: 'Antinuke enabled' },
+        { id: 'zplus',           type: 'toggle', label: 'Z+ maximum lockdown' },
+        { id: 'wallRole',        type: 'toggle', label: 'Wall role active' },
+        { id: 'autoRecovery',    type: 'toggle', label: 'Auto-recovery of nuked changes' },
+        { id: 'betrayalGuard',   type: 'toggle', label: 'Betrayal guard' },
+        { id: 'vanityGuard',     type: 'toggle', label: 'Vanity URL guard' },
+        { id: 'logChannel',      type: 'text',   label: 'Log channel ID', placeholder: '#antinuke-logs or 123456…' },
+        { id: 'limitPerMin',     type: 'number', label: 'Actions per minute before trigger', min: 1, max: 60, default: 6 },
+      ]
+    },
+    {
+      id: 'automod',   label: 'Automod',   icon: '⚖', desc: 'Twelve filters keep chat clean — turn each on independently.',
+      fields: [
+        { id: 'enabled',          type: 'toggle', label: 'Automod enabled' },
+        { id: 'antispam',         type: 'toggle', label: 'Anti spam' },
+        { id: 'anticaps',         type: 'toggle', label: 'Anti caps' },
+        { id: 'antilink',         type: 'toggle', label: 'Anti link' },
+        { id: 'antiinvite',       type: 'toggle', label: 'Anti invite' },
+        { id: 'antimassmention',  type: 'toggle', label: 'Anti mass mention' },
+        { id: 'antiemojispam',    type: 'toggle', label: 'Anti emoji spam' },
+        { id: 'antinsfwlink',     type: 'toggle', label: 'Anti NSFW link' },
+        { id: 'antiattachmentspam',type:'toggle', label: 'Anti attachment spam' },
+        { id: 'antizalgo',        type: 'toggle', label: 'Anti zalgo' },
+        { id: 'similarmessage',   type: 'toggle', label: 'Similar message spam' },
+        { id: 'newlinespam',      type: 'toggle', label: 'New-line spam' },
+        { id: 'charlimit',        type: 'number', label: 'Character limit', min: 1, max: 4000, default: 1000 },
+        { id: 'punishment',       type: 'select', label: 'Default punishment', options: ['warn','timeout','kick','ban'] },
+      ]
+    },
+    {
+      id: 'welcomer',  label: 'Welcomer',  icon: '👋', desc: 'Greet new members with custom messages, autoroles and DMs.',
+      fields: [
+        { id: 'enabled',     type: 'toggle', label: 'Welcomer enabled' },
+        { id: 'channel',     type: 'text',   label: 'Welcome channel', placeholder: '#welcome' },
+        { id: 'message',     type: 'textarea',label: 'Welcome message', placeholder: 'Welcome {user} to {server}!' },
+        { id: 'card',        type: 'toggle', label: 'Send welcome card' },
+        { id: 'dm',          type: 'toggle', label: 'Also DM the new member' },
+        { id: 'autorole',    type: 'text',   label: 'Auto-role ID', placeholder: 'Role ID to assign' },
+      ]
+    },
+    {
+      id: 'tickets',   label: 'Tickets',   icon: '🎫', desc: 'Set up support, applications, and report tickets in seconds.',
+      fields: [
+        { id: 'enabled',  type: 'toggle', label: 'Ticket system enabled' },
+        { id: 'category', type: 'text',   label: 'Tickets category ID', placeholder: 'Category for new tickets' },
+        { id: 'support',  type: 'text',   label: 'Support role ID', placeholder: 'Role pinged on new tickets' },
+        { id: 'logs',     type: 'text',   label: 'Logs channel', placeholder: '#ticket-logs' },
+        { id: 'transcripts',type:'toggle', label: 'Save transcripts on close' },
+      ]
+    },
+    {
+      id: 'j2c',       label: 'Join-to-Create', icon: '🔊', desc: 'Members create their own voice channels on demand.',
+      fields: [
+        { id: 'enabled', type: 'toggle', label: 'Join-to-Create enabled' },
+        { id: 'lobby',   type: 'text',   label: 'Lobby voice channel', placeholder: 'Voice channel ID' },
+        { id: 'category',type: 'text',   label: 'Channels category', placeholder: 'Category ID' },
+        { id: 'limit',   type: 'number', label: 'Default user limit', min: 0, max: 99, default: 0 },
+      ]
+    },
+    {
+      id: 'logs',      label: 'Logs',      icon: '📜', desc: 'Audit logs split across dedicated channels.',
+      fields: [
+        { id: 'enabled',     type: 'toggle', label: 'Logging enabled' },
+        { id: 'message',     type: 'text',   label: 'Message logs channel', placeholder: '#message-logs' },
+        { id: 'member',      type: 'text',   label: 'Member logs channel',  placeholder: '#member-logs' },
+        { id: 'voice',       type: 'text',   label: 'Voice logs channel',   placeholder: '#voice-logs' },
+        { id: 'role',        type: 'text',   label: 'Role logs channel',    placeholder: '#role-logs' },
+        { id: 'moderation',  type: 'text',   label: 'Mod logs channel',     placeholder: '#mod-logs' },
+      ]
+    },
+    {
+      id: 'customrole',label: 'Custom Roles',icon:'🎨', desc: 'Boosters claim a private role with their own name and color.',
+      fields: [
+        { id: 'enabled',  type: 'toggle', label: 'Custom roles enabled' },
+        { id: 'baserole', type: 'text',   label: 'Position base role', placeholder: 'New roles placed below this' },
+        { id: 'requiresBoost',type:'toggle', label: 'Require server boost' },
+      ]
+    },
+    {
+      id: 'music',     label: 'Music',     icon: '🎵', desc: 'High-quality music with playlists, filters and 24/7 mode.',
+      fields: [
+        { id: 'enabled',     type: 'toggle', label: 'Music enabled' },
+        { id: 'always247',   type: 'toggle', label: '24/7 mode' },
+        { id: 'autoplay',    type: 'toggle', label: 'Autoplay' },
+        { id: 'defaultVolume',type:'number', label: 'Default volume (%)', min: 0, max: 200, default: 100 },
+        { id: 'djRole',      type: 'text',   label: 'DJ role ID', placeholder: 'Optional DJ role' },
+      ]
+    },
+    {
+      id: 'giveaway',  label: 'Giveaway',  icon: '🎁', desc: 'Run flawless giveaways with role and server requirements.',
+      fields: [
+        { id: 'enabled',   type: 'toggle', label: 'Giveaway module enabled' },
+        { id: 'manager',   type: 'text',   label: 'Manager role ID', placeholder: 'Who can host giveaways' },
+        { id: 'pingRole',  type: 'text',   label: 'Default ping role', placeholder: 'Optional' },
+      ]
+    },
+    {
+      id: 'autoresponder',label:'Autoresponder',icon:'💬', desc: 'Auto-replies to keywords in chat.',
+      fields: [
+        { id: 'enabled', type: 'toggle', label: 'Autoresponder enabled' },
+        { id: 'matchMode',type:'select', label: 'Match mode', options: ['exact','contains','startsWith','regex'] },
+      ]
+    },
+    {
+      id: 'config',    label: 'Server Config', icon: '⚙', desc: 'Per-server prefix, color, and language.',
+      fields: [
+        { id: 'prefix',  type: 'text',   label: 'Command prefix', default: ',', placeholder: ',' },
+        { id: 'color',   type: 'text',   label: 'Embed color (hex)', default: '#ec4899', placeholder: '#ec4899' },
+        { id: 'language',type: 'select', label: 'Language', options: ['en','es','fr','de','pt','hi'] },
+        { id: 'antibot', type: 'toggle', label: 'Block other bots from joining' },
+        { id: 'sticky',  type: 'toggle', label: 'Sticky messages enabled' },
+      ]
+    },
+  ];
+
+  // ─── State ──────────────────────────────────────────────────────────────────
+  const STORE_KEY = 'lily.dashboard.v1';
+  const load = () => { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; } };
+  const save = (s) => localStorage.setItem(STORE_KEY, JSON.stringify(s));
+
+  let state = load();
+  if (!state.servers) state.servers = DEFAULT_SERVERS;
+  if (!state.activeServer) state.activeServer = state.servers[0].id;
+  if (!state.config) state.config = {};
+  if (!state.activeSection) state.activeSection = 'antinuke';
+  let authed = false;
+  save(state);
+
+  // ─── Discord auth ───────────────────────────────────────────────────────────
+  async function loadAuth() {
+    try {
+      const r = await fetch('/api/auth/me', { credentials: 'same-origin' });
+      const j = await r.json();
+      if (!j.authenticated) { authed = false; return; }
+      authed = true;
+      // Show user chip, hide login
+      document.getElementById('login-btn').classList.add('hidden');
+      const chip = document.getElementById('user-chip');
+      chip.classList.remove('hidden'); chip.classList.add('flex');
+      document.getElementById('user-avatar').src = j.user.avatarUrl;
+      document.getElementById('user-name').textContent = j.user.username;
+      // Replace server list with real guilds the user can manage
+      if (Array.isArray(j.guilds)) {
+        const real = j.guilds.map(g => ({
+          id: g.id, name: g.name, icon: g.iconUrl, members: 0, owner: g.owner, real: true
+        }));
+        // Keep any custom/demo servers the user added previously
+        const customs = (state.servers || []).filter(s => !s.real);
+        state.servers = real.length ? real : DEFAULT_SERVERS;
+        if (!state.servers.some(s => s.id === state.activeServer)) {
+          state.activeServer = state.servers[0].id;
+        }
+        save(state);
+      }
+      document.getElementById('connection-status').innerHTML =
+        '<span class="ping"></span> Logged in as ' + escapeHtml(j.user.username) +
+        ' · ' + (j.guilds?.length || 0) + ' manageable server' + ((j.guilds?.length||0)===1?'':'s');
+    } catch (e) {
+      authed = false;
+    }
+  }
+
+  document.getElementById('logout-btn').onclick = async () => {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+    location.reload();
+  };
+
+  function getCfg(serverId, sectionId) {
+    state.config[serverId] = state.config[serverId] || {};
+    state.config[serverId][sectionId] = state.config[serverId][sectionId] || {};
+    return state.config[serverId][sectionId];
+  }
+
+  // ─── Drafts (per-section, in-memory until "Save") ──────────────────────────
+  // drafts[serverId][sectionId] = { ...pending field values }
+  const drafts = {};
+  function getDraft(serverId, sectionId, autoCreate=false) {
+    drafts[serverId] = drafts[serverId] || {};
+    if (autoCreate && !drafts[serverId][sectionId]) {
+      const saved = getCfg(serverId, sectionId);
+      drafts[serverId][sectionId] = JSON.parse(JSON.stringify(saved));
+    }
+    return drafts[serverId][sectionId] || null;
+  }
+  function viewCfg(serverId, sectionId) {
+    return getDraft(serverId, sectionId) || getCfg(serverId, sectionId);
+  }
+  function isDirty(serverId, sectionId) {
+    const d = getDraft(serverId, sectionId);
+    if (!d) return false;
+    const saved = getCfg(serverId, sectionId);
+    return JSON.stringify(d) !== JSON.stringify(saved);
+  }
+  function dirtySectionsCount() {
+    const d = drafts[state.activeServer] || {};
+    let n = 0;
+    for (const k of Object.keys(d)) if (isDirty(state.activeServer, k)) n++;
+    return n;
+  }
+  function commitDraft(serverId, sectionId) {
+    const d = getDraft(serverId, sectionId);
+    if (!d) return false;
+    state.config[serverId] = state.config[serverId] || {};
+    state.config[serverId][sectionId] = JSON.parse(JSON.stringify(d));
+    delete drafts[serverId][sectionId];
+    save(state);
+    return true;
+  }
+  function cancelDraft(serverId, sectionId) {
+    if (drafts[serverId]) delete drafts[serverId][sectionId];
+  }
+
+  function setField(sectionId, fieldId, value) {
+    const d = getDraft(state.activeServer, sectionId, true);
+    d[fieldId] = value;
+    renderSidebar(); // dirty indicator
+  }
+
+  function labelFor(sectionId, fieldId) {
+    const sec = SECTIONS.find(s => s.id === sectionId);
+    const f = sec?.fields.find(f => f.id === fieldId);
+    return (sec?.label || '') + ' · ' + (f?.label || fieldId);
+  }
+
+  // ─── Server controls ────────────────────────────────────────────────────────
+  function renderServers() {
+    const sel = document.getElementById('server-select');
+    sel.innerHTML = state.servers.map(s => {
+      const prefix = s.real ? (s.owner ? '👑' : '🟣') : (s.icon || '🟣');
+      const suffix = s.members ? ` · ${s.members.toLocaleString()} members` : '';
+      return `<option value="${s.id}" ${s.id===state.activeServer?'selected':''}>${prefix} ${escapeHtml(s.name)}${suffix}</option>`;
+    }).join('');
+    sel.onchange = e => { state.activeServer = e.target.value; save(state); renderAll(); };
+  }
+
+  document.getElementById('add-server').onclick = () => {
+    const name = prompt('Server name:'); if (!name) return;
+    const id = 'g_' + Math.random().toString(36).slice(2,8);
+    state.servers.push({ id, name, icon: '✨', members: Math.floor(50 + Math.random()*5000) });
+    state.activeServer = id;
+    save(state);
+    renderAll();
+    showToast(`Added · ${name}`);
+  };
+
+  // ─── Sidebar ────────────────────────────────────────────────────────────────
+  function renderSidebar() {
+    const sb = document.getElementById('sidebar');
+    const dirtyCount = dirtySectionsCount();
+    sb.innerHTML = `
+      ${SECTIONS.map(sec => {
+        const cfg = viewCfg(state.activeServer, sec.id);
+        const enabled = cfg.enabled === true;
+        const dirty = isDirty(state.activeServer, sec.id);
+        return `
+          <button data-sec="${sec.id}" class="nav-item w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-3 ${state.activeSection===sec.id?'active':''}">
+            <span class="text-lg w-6 text-center">${sec.icon}</span>
+            <span class="flex-1 text-sm font-medium">${sec.label}${dirty ? ' <span class="ml-1 inline-block w-1.5 h-1.5 rounded-full bg-amber-400 align-middle" title="Unsaved changes"></span>' : ''}</span>
+            ${enabled ? '<span class="text-[10px] uppercase tracking-widest text-emerald-400">on</span>' : '<span class="text-[10px] uppercase tracking-widest text-neutral-600">off</span>'}
+          </button>`;
+      }).join('')}
+      <div class="mt-4 pt-4 border-t border-white/5">
+        <button id="save-all-btn" class="w-full px-3 py-2.5 rounded-xl text-sm font-semibold transition ${dirtyCount?'btn-primary text-white':'bg-white/5 text-neutral-500 cursor-not-allowed'}" ${dirtyCount?'':'disabled'}>
+          ${dirtyCount ? `💾 Save all (${dirtyCount})` : 'No unsaved changes'}
+        </button>
+      </div>`;
+    sb.querySelectorAll('button[data-sec]').forEach(b => b.onclick = () => { state.activeSection = b.dataset.sec; save(state); renderMain(); renderSidebar(); });
+    const sa = document.getElementById('save-all-btn');
+    if (sa && dirtyCount) {
+      sa.onclick = () => {
+        let saved = 0;
+        SECTIONS.forEach(s => { if (commitDraft(state.activeServer, s.id)) saved++; });
+        renderMain(); renderSidebar();
+        showToast(`Saved ${saved} section${saved===1?'':'s'} for ${currentServerName()}`);
+      };
+    }
+  }
+
+  // ─── Main panel ─────────────────────────────────────────────────────────────
+  function renderMain() {
+    const sec = SECTIONS.find(s => s.id === state.activeSection);
+    const cfg = viewCfg(state.activeServer, sec.id);
+    const dirty = isDirty(state.activeServer, sec.id);
+    const main = document.getElementById('main');
+
+    const toggleCount = sec.fields.filter(f => f.type==='toggle').length;
+    const onCount     = sec.fields.filter(f => f.type==='toggle' && cfg[f.id] === true).length;
+    const completion  = toggleCount ? Math.round(onCount / toggleCount * 100) : 0;
+
+    main.innerHTML = `
+      <div class="panel rounded-2xl p-6">
+        <div class="flex items-start justify-between gap-6 flex-wrap">
+          <div class="flex-1 min-w-0">
+            <div class="text-xs uppercase tracking-widest text-neutral-400">${sec.label}</div>
+            <h2 class="mt-1 text-2xl font-bold">${sec.icon} ${sec.label} · <span class="text-neutral-500 font-normal">${currentServerName()}</span>
+              ${dirty ? '<span class="ml-2 text-[11px] uppercase tracking-widest text-amber-300 align-middle px-2 py-0.5 rounded-full bg-amber-400/10 border border-amber-300/30">Unsaved</span>' : ''}
+            </h2>
+            <p class="mt-2 text-sm text-neutral-400">${sec.desc}</p>
+          </div>
+          <div class="text-right min-w-[200px]">
+            <div class="text-xs text-neutral-500">${onCount}/${toggleCount} toggles on</div>
+            <div class="progress mt-2"><div style="width:${completion}%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel rounded-2xl p-6">
+        <div class="grid md:grid-cols-2 gap-x-8 gap-y-5">
+          ${sec.fields.map(f => fieldHtml(sec.id, f, cfg)).join('')}
+        </div>
+
+        <div class="mt-6 pt-5 border-t border-white/5 flex flex-wrap items-center gap-2 text-sm">
+          <button data-action="enable-all" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition">Enable all toggles</button>
+          <button data-action="disable-all" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition">Disable all toggles</button>
+
+          <div class="ml-auto flex flex-wrap items-center gap-2">
+            <button data-action="reset" class="px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 transition">Reset to defaults</button>
+            <button data-action="cancel" class="px-3 py-1.5 rounded-lg ${dirty?'bg-white/5 hover:bg-white/10':'bg-white/5 text-neutral-600 cursor-not-allowed'} transition" ${dirty?'':'disabled'}>Cancel</button>
+            <button data-action="save" class="px-4 py-1.5 rounded-lg ${dirty?'btn-primary text-white font-semibold':'bg-white/5 text-neutral-600 cursor-not-allowed'} transition" ${dirty?'':'disabled'}>💾 Save changes</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Wire up toggles (modify draft, re-render — does not commit)
+    main.querySelectorAll('[data-toggle]').forEach(el => {
+      el.onclick = () => {
+        const fid = el.dataset.toggle;
+        const cur = cfg[fid] === true;
+        el.classList.toggle('on', !cur);
+        setField(sec.id, fid, !cur);
+        renderMain();
+      };
+    });
+    main.querySelectorAll('[data-input]').forEach(el => {
+      const handler = (e) => {
+        const fid = el.dataset.input;
+        const v = el.tagName === 'SELECT' ? e.target.value : (el.type === 'number' ? Number(e.target.value) : e.target.value);
+        setField(sec.id, fid, v);
+      };
+      el.oninput = handler;
+      el.onchange = handler;
+    });
+
+    // Quick actions
+    main.querySelector('[data-action="enable-all"]').onclick = () => {
+      const d = getDraft(state.activeServer, sec.id, true);
+      sec.fields.filter(f => f.type==='toggle').forEach(f => d[f.id] = true);
+      renderMain(); renderSidebar(); showToast(`All ${sec.label} toggles on (unsaved)`);
+    };
+    main.querySelector('[data-action="disable-all"]').onclick = () => {
+      const d = getDraft(state.activeServer, sec.id, true);
+      sec.fields.filter(f => f.type==='toggle').forEach(f => d[f.id] = false);
+      renderMain(); renderSidebar(); showToast(`All ${sec.label} toggles off (unsaved)`);
+    };
+    main.querySelector('[data-action="reset"]').onclick = () => {
+      if (!confirm(`Reset ${sec.label} to defaults? This wipes all saved settings for this section.`)) return;
+      delete state.config[state.activeServer][sec.id];
+      cancelDraft(state.activeServer, sec.id);
+      save(state); renderMain(); renderSidebar(); showToast(`${sec.label} reset to defaults`);
+    };
+    const cancelBtn = main.querySelector('[data-action="cancel"]');
+    if (cancelBtn && dirty) cancelBtn.onclick = () => {
+      cancelDraft(state.activeServer, sec.id);
+      renderMain(); renderSidebar(); showToast(`${sec.label} changes discarded`);
+    };
+    const saveBtn = main.querySelector('[data-action="save"]');
+    if (saveBtn && dirty) saveBtn.onclick = () => {
+      commitDraft(state.activeServer, sec.id);
+      renderMain(); renderSidebar(); showToast(`${sec.label} saved · ${currentServerName()}`);
+    };
+  }
+
+  function fieldHtml(secId, f, cfg) {
+    const v = cfg[f.id] !== undefined ? cfg[f.id] : (f.default !== undefined ? f.default : (f.type === 'toggle' ? false : ''));
+    if (f.type === 'toggle') {
+      return `
+        <div class="flex items-center justify-between gap-3 py-1">
+          <div>
+            <div class="text-sm font-medium">${f.label}</div>
+            ${f.help ? `<div class="text-xs text-neutral-500">${f.help}</div>` : ''}
+          </div>
+          <div data-toggle="${f.id}" class="switch ${v?'on':''}"></div>
+        </div>`;
+    }
+    if (f.type === 'select') {
+      return `
+        <label class="block">
+          <div class="text-sm font-medium mb-1">${f.label}</div>
+          <select data-input="${f.id}" class="input">
+            ${f.options.map(o => `<option value="${o}" ${v===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </label>`;
+    }
+    if (f.type === 'textarea') {
+      return `
+        <label class="block md:col-span-2">
+          <div class="text-sm font-medium mb-1">${f.label}</div>
+          <textarea data-input="${f.id}" rows="3" class="input" placeholder="${f.placeholder||''}">${escapeHtml(v||'')}</textarea>
+        </label>`;
+    }
+    // text or number
+    return `
+      <label class="block">
+        <div class="text-sm font-medium mb-1">${f.label}</div>
+        <input data-input="${f.id}" type="${f.type==='number'?'number':'text'}" ${f.min!==undefined?`min="${f.min}"`:''} ${f.max!==undefined?`max="${f.max}"`:''}
+               class="input" placeholder="${f.placeholder||''}" value="${escapeHtml(String(v||''))}" />
+      </label>`;
+  }
+
+  function currentServerName() {
+    return state.servers.find(s => s.id === state.activeServer)?.name || '—';
+  }
+
+  // ─── Toast ──────────────────────────────────────────────────────────────────
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 1600);
+  }
+
+  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  function renderAll() { renderServers(); renderSidebar(); renderMain(); }
+  loadAuth().then(renderAll);
+</script>
+<!-- ===== Cookie / data consent ===== -->
+<div id="lily-consent" class="fixed bottom-4 inset-x-4 md:inset-x-auto md:right-6 md:bottom-6 md:max-w-md z-[60] hidden">
+  <div class="rounded-2xl border border-pink-500/30 bg-neutral-950/95 backdrop-blur-xl shadow-2xl shadow-pink-900/30 p-5">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 grid place-items-center text-lg shrink-0">🍪</div>
+      <div class="flex-1 min-w-0">
+        <h4 class="text-sm font-semibold text-white">Cookies &amp; data</h4>
+        <p class="mt-1 text-xs text-neutral-400 leading-relaxed">
+          We use one first-party session cookie (<code class="text-pink-300">lily.sid</code>) only when you sign in to the dashboard, and your dashboard preferences are stored in your browser's localStorage. No third-party tracking, ads, or analytics.
+          See our <a href="/privacy" class="text-pink-400 underline">Privacy Policy</a>.
+        </p>
+        <div class="mt-3 flex items-center gap-2">
+          <button id="lily-consent-accept" class="px-3 py-1.5 rounded-full text-xs font-semibold text-white" style="background:linear-gradient(90deg,#ec4899,#c084fc);">Accept</button>
+          <button id="lily-consent-decline" class="px-3 py-1.5 rounded-full text-xs font-medium text-neutral-300 border border-white/10 hover:bg-white/5">Decline</button>
+          <button id="lily-consent-close" aria-label="Close" class="ml-auto text-neutral-500 hover:text-white text-xl leading-none px-1">×</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var KEY='lily.consent.v1';
+  try { if(localStorage.getItem(KEY)) return; } catch(e){}
+  var el=document.getElementById('lily-consent'); if(!el) return;
+  setTimeout(function(){ el.classList.remove('hidden'); }, 400);
+  function set(v){ try{ localStorage.setItem(KEY, JSON.stringify({choice:v,ts:Date.now()})); }catch(e){} el.remove(); }
+  document.getElementById('lily-consent-accept').onclick=function(){ set('accepted'); };
+  document.getElementById('lily-consent-decline').onclick=function(){
+    try{ localStorage.removeItem('lily.dashboard.v1'); }catch(e){}
+    set('declined');
+  };
+  document.getElementById('lily-consent-close').onclick=function(){ set('dismissed'); };
+})();
+</script>
+
+</body>
+</html>
