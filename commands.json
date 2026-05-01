@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lily — Commands</title>
+<meta name="description" content="Explore all 470+ commands across 23 modules in Lily — Discord's most powerful all-in-one app." />
+<link rel="icon" href="/lily.png" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'] } } } };
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  body { background: radial-gradient(900px 500px at 50% -100px, rgba(236,72,153,.15), transparent 60%), #0a0a0a; }
+  .grad-text { background: linear-gradient(90deg,#f9a8d4,#c084fc,#60a5fa); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .nav-blur { backdrop-filter: blur(12px); background: rgba(10,10,10,.6); }
+  .card { background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border: 1px solid rgba(255,255,255,.06); transition: all .25s ease; }
+  .card:hover { border-color: rgba(236,72,153,.4); transform: translateY(-2px); }
+  .chip { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); }
+  .chip.active { background: linear-gradient(90deg,#ec4899,#c084fc); border-color: transparent; color: #fff; }
+  .btn-primary { background: linear-gradient(90deg,#ec4899,#c084fc); }
+  details summary::-webkit-details-marker { display: none; }
+  details[open] .chev { transform: rotate(90deg); }
+  .chev { transition: transform .2s ease; }
+</style>
+</head>
+<body class="text-neutral-100 font-sans antialiased min-h-screen">
+
+<header class="sticky top-0 z-50 nav-blur border-b border-white/5">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-3">
+      <img src="/lily.png" alt="Lily" class="w-9 h-9 rounded-full ring-2 ring-pink-500/40" />
+      <span class="font-semibold text-lg tracking-tight">lily</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-8 text-sm text-neutral-300">
+      <a href="/commands" class="text-white">Commands</a>
+      <a href="/dashboard" class="hover:text-white transition">Dashboard</a>
+      <a href="/" class="hover:text-white transition">Home</a>
+      <a href="/premium" class="hover:text-white transition">Premium</a>
+      <a href="https://discord.gg/RYY9SU4uj" target="_blank" rel="noopener" class="hover:text-white transition">Support</a>
+    </nav>
+    <a href="https://discord.com/oauth2/authorize?client_id=1493552809415671830" target="_blank" rel="noopener"
+       class="btn-primary px-4 py-2 rounded-full text-sm font-medium">Add to Discord</a>
+  </div>
+</header>
+
+<section class="max-w-7xl mx-auto px-6 pt-16 pb-10">
+  <p class="text-xs uppercase tracking-widest text-neutral-400">Commands</p>
+  <h1 class="mt-2 text-5xl font-extrabold tracking-tight">Every command, <span class="grad-text">in one place</span></h1>
+  <p class="mt-4 text-neutral-400 max-w-2xl"><span id="totalNamesPill" class="text-pink-300 font-semibold">470+</span> commands (incl. aliases) across <span id="totalCatsPill" class="text-purple-300 font-semibold">23</span> modules. Search by name, alias, or description.</p>
+
+  <div class="mt-8 flex flex-col md:flex-row gap-3">
+    <div class="relative flex-1">
+      <input id="search" type="text" placeholder="Search commands… (e.g. ban, antinuke, play)"
+             class="w-full bg-white/5 border border-white/10 focus:border-pink-500/60 focus:outline-none rounded-xl px-4 py-3 placeholder:text-neutral-500" />
+      <span class="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 text-sm" id="result-count"></span>
+    </div>
+  </div>
+
+  <div id="chips" class="mt-5 flex flex-wrap gap-2"></div>
+</section>
+
+<section class="max-w-7xl mx-auto px-6 pb-24">
+  <div id="grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+  <p id="empty" class="hidden text-center text-neutral-500 py-16">No commands match your search.</p>
+</section>
+
+<footer class="border-t border-white/5">
+  <div class="max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-neutral-500">
+    <div class="flex items-center gap-3">
+      <img src="/lily.png" alt="Lily" class="w-7 h-7 rounded-full" />
+      <span>© <span id="year"></span> lily</span>
+    </div>
+    <div class="flex flex-wrap gap-6">
+      <a href="/" class="hover:text-white transition">Home</a>
+      <a href="/dashboard" class="hover:text-white transition">Dashboard</a>
+      <a href="/terms" class="hover:text-white transition">Terms</a>
+      <a href="/privacy" class="hover:text-white transition">Privacy</a>
+      <a href="/premium" class="hover:text-white">Premium</a>
+      <a href="/premium" class="hover:text-white transition">Premium</a>
+      <a href="https://discord.gg/RYY9SU4uj" target="_blank" rel="noopener" class="hover:text-white transition">Support</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const CATEGORY_META = {
+    'Moderation':     { icon: '🛠', color: 'text-red-300' },
+    'Antinuke':       { icon: '🛡', color: 'text-rose-300' },
+    'Automod':        { icon: '⚖', color: 'text-amber-300' },
+    'Welcomer':       { icon: '👋', color: 'text-orange-300' },
+    'Ticket':         { icon: '🎫', color: 'text-cyan-300' },
+    'Logs':           { icon: '📜', color: 'text-zinc-300' },
+    'Join to Create': { icon: '🔊', color: 'text-emerald-300' },
+    'Voice':          { icon: '🗣', color: 'text-lime-300' },
+    'Music':          { icon: '🎵', color: 'text-indigo-300' },
+    'Playlist':       { icon: '📀', color: 'text-purple-300' },
+    'Custom Role':    { icon: '🎨', color: 'text-fuchsia-300' },
+    'Customize':      { icon: '🖌', color: 'text-pink-300' },
+    'Permit':         { icon: '🔑', color: 'text-yellow-300' },
+    'Autoresponder':  { icon: '💬', color: 'text-sky-300' },
+    'Giveaway':       { icon: '🎁', color: 'text-fuchsia-300' },
+    'Information':    { icon: 'ℹ',  color: 'text-blue-300' },
+    'Fun':            { icon: '🎲', color: 'text-pink-300' },
+    'PFPs':           { icon: '🖼', color: 'text-teal-300' },
+    'Premium':        { icon: '⭐', color: 'text-amber-200' },
+    'Config':         { icon: '⚙',  color: 'text-sky-300' },
+    'Scan':           { icon: '🔍', color: 'text-violet-300' },
+    'Developer':      { icon: '⚡', color: 'text-yellow-300' },
+    'Other':          { icon: '📦', color: 'text-neutral-300' },
+  };
+
+  let DATA = {};
+  let activeCat = 'all';
+  let q = '';
+
+  fetch('/commands.json').then(r => r.json()).then(j => { DATA = j; render(); buildChips(); });
+
+  function totalNames(arr){ let n=0; for(const c of arr) n += 1 + (c.aliases?.length||0); return n; }
+
+  function buildChips() {
+    const chips = document.getElementById('chips');
+    const cats = ['all', ...Object.keys(DATA)];
+    let grand = 0; Object.values(DATA).forEach(arr => grand += totalNames(arr));
+    chips.innerHTML = cats.map(c => {
+      const meta = c === 'all' ? { icon: '✨' } : (CATEGORY_META[c] || { icon: '📦' });
+      const label = c === 'all' ? 'All' : c;
+      const count = c === 'all' ? grand : totalNames(DATA[c]);
+      return `<button data-cat="${c}" class="chip rounded-full px-4 py-2 text-sm transition ${c===activeCat?'active':''}">${meta.icon} ${label} <span class="opacity-60 ml-1">${count}</span></button>`;
+    }).join('');
+    chips.querySelectorAll('button').forEach(b => b.onclick = () => { activeCat = b.dataset.cat; buildChips(); render(); });
+    // update header pills
+    const tn = document.getElementById('totalNamesPill'); if (tn) tn.textContent = grand;
+    const tc = document.getElementById('totalCatsPill'); if (tc) tc.textContent = Object.keys(DATA).length;
+  }
+
+  function render() {
+    const grid = document.getElementById('grid');
+    const empty = document.getElementById('empty');
+    const cats = activeCat === 'all' ? Object.keys(DATA) : [activeCat];
+    let cards = [];
+    for (const c of cats) {
+      const meta = CATEGORY_META[c] || { icon: '📦', color: 'text-neutral-300' };
+      for (const cmd of (DATA[c] || [])) {
+        const aliases = cmd.aliases || [];
+        const hay = (cmd.name + ' ' + (cmd.description || '') + ' ' + aliases.join(' ')).toLowerCase();
+        if (q && !hay.includes(q)) continue;
+        const prefix = cmd.kind === 'slash' ? '/' : ',';
+        cards.push(`
+          <div class="card rounded-2xl p-5">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <div class="text-xs uppercase tracking-widest ${meta.color}">${meta.icon} ${c}</div>
+                <div class="mt-1 font-mono text-lg font-semibold break-all">${prefix}${cmd.name}</div>
+              </div>
+              <div class="flex flex-col items-end gap-1 shrink-0">
+                ${cmd.premium ? '<span class="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-amber-400/15 text-amber-200 border border-amber-300/30">Premium</span>' : ''}
+                ${cmd.kind === 'slash' ? '<span class="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-sky-400/15 text-sky-200 border border-sky-300/30">Slash</span>' : ''}
+                ${cmd.permission ? `<span class="text-[10px] text-neutral-500" title="${escapeHtml(cmd.permission)}">${escapeHtml(cmd.permission)}</span>` : ''}
+              </div>
+            </div>
+            ${cmd.description ? `<p class="mt-3 text-sm text-neutral-400">${escapeHtml(cmd.description)}</p>` : ''}
+            ${aliases.length ? `
+              <div class="mt-4 flex flex-wrap gap-1.5">
+                <span class="text-[10px] uppercase tracking-widest text-neutral-500 self-center mr-1">Aliases</span>
+                ${aliases.map(a => `<span class="font-mono text-xs px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-pink-200">${prefix}${escapeHtml(a)}</span>`).join('')}
+              </div>` : ''}
+          </div>
+        `);
+      }
+    }
+    grid.innerHTML = cards.join('');
+    empty.classList.toggle('hidden', cards.length > 0);
+    document.getElementById('result-count').textContent = cards.length ? `${cards.length} result${cards.length===1?'':'s'}` : '';
+  }
+
+  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  document.getElementById('search').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); render(); });
+</script>
+<!-- ===== Cookie / data consent ===== -->
+<div id="lily-consent" class="fixed bottom-4 inset-x-4 md:inset-x-auto md:right-6 md:bottom-6 md:max-w-md z-[60] hidden">
+  <div class="rounded-2xl border border-pink-500/30 bg-neutral-950/95 backdrop-blur-xl shadow-2xl shadow-pink-900/30 p-5">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 grid place-items-center text-lg shrink-0">🍪</div>
+      <div class="flex-1 min-w-0">
+        <h4 class="text-sm font-semibold text-white">Cookies &amp; data</h4>
+        <p class="mt-1 text-xs text-neutral-400 leading-relaxed">
+          We use one first-party session cookie (<code class="text-pink-300">lily.sid</code>) only when you sign in to the dashboard, and your dashboard preferences are stored in your browser's localStorage. No third-party tracking, ads, or analytics.
+          See our <a href="/privacy" class="text-pink-400 underline">Privacy Policy</a>.
+        </p>
+        <div class="mt-3 flex items-center gap-2">
+          <button id="lily-consent-accept" class="px-3 py-1.5 rounded-full text-xs font-semibold text-white" style="background:linear-gradient(90deg,#ec4899,#c084fc);">Accept</button>
+          <button id="lily-consent-decline" class="px-3 py-1.5 rounded-full text-xs font-medium text-neutral-300 border border-white/10 hover:bg-white/5">Decline</button>
+          <button id="lily-consent-close" aria-label="Close" class="ml-auto text-neutral-500 hover:text-white text-xl leading-none px-1">×</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var KEY='lily.consent.v1';
+  try { if(localStorage.getItem(KEY)) return; } catch(e){}
+  var el=document.getElementById('lily-consent'); if(!el) return;
+  setTimeout(function(){ el.classList.remove('hidden'); }, 400);
+  function set(v){ try{ localStorage.setItem(KEY, JSON.stringify({choice:v,ts:Date.now()})); }catch(e){} el.remove(); }
+  document.getElementById('lily-consent-accept').onclick=function(){ set('accepted'); };
+  document.getElementById('lily-consent-decline').onclick=function(){
+    try{ localStorage.removeItem('lily.dashboard.v1'); }catch(e){}
+    set('declined');
+  };
+  document.getElementById('lily-consent-close').onclick=function(){ set('dismissed'); };
+})();
+</script>
+
+</body>
+</html>

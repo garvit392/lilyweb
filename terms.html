@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lily — Privacy Policy</title>
+<meta name="description" content="Privacy Policy for Lily, the Discord all-in-one bot." />
+<link rel="icon" href="/lily.png" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'] } } } };</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  body { background: radial-gradient(900px 500px at 50% -100px, rgba(236,72,153,.12), transparent 60%), #0a0a0a; }
+  .grad-text { background: linear-gradient(90deg,#f9a8d4,#c084fc,#60a5fa); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .nav-blur { backdrop-filter: blur(12px); background: rgba(10,10,10,.6); }
+  .btn-primary { background: linear-gradient(90deg,#ec4899,#c084fc); }
+  .prose-lily h2 { font-size: 1.4rem; font-weight: 700; margin-top: 2.2rem; margin-bottom: .6rem; color: #fff; }
+  .prose-lily h3 { font-size: 1.05rem; font-weight: 600; margin-top: 1.4rem; margin-bottom: .4rem; color: #fff; }
+  .prose-lily p, .prose-lily li { color: #a3a3a3; line-height: 1.7; }
+  .prose-lily ul { list-style: disc; padding-left: 1.4rem; margin: .5rem 0 1rem; }
+  .prose-lily a { color: #f472b6; text-decoration: underline; text-underline-offset: 3px; }
+  .prose-lily a:hover { color: #fbcfe8; }
+  .panel { background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border: 1px solid rgba(255,255,255,.06); }
+  table { width: 100%; border-collapse: collapse; margin: .8rem 0 1.4rem; font-size: .9rem; }
+  th, td { text-align: left; padding: .6rem .8rem; border-bottom: 1px solid rgba(255,255,255,.06); color: #d4d4d4; vertical-align: top; }
+  th { color: #fff; background: rgba(255,255,255,.03); font-weight: 600; }
+</style>
+</head>
+<body class="text-neutral-100 font-sans antialiased min-h-screen">
+
+<header class="sticky top-0 z-50 nav-blur border-b border-white/5">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-3">
+      <img src="/lily.png" alt="Lily" class="w-9 h-9 rounded-full ring-2 ring-pink-500/40" />
+      <span class="font-semibold text-lg tracking-tight">lily</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-8 text-sm text-neutral-300">
+      <a href="/" class="hover:text-white transition">Home</a>
+      <a href="/commands" class="hover:text-white transition">Commands</a>
+      <a href="/dashboard" class="hover:text-white transition">Dashboard</a>
+      <a href="/premium" class="hover:text-white transition">Premium</a>
+      <a href="https://discord.gg/RYY9SU4uj" target="_blank" rel="noopener" class="hover:text-white transition">Support</a>
+    </nav>
+    <a href="https://discord.com/oauth2/authorize?client_id=1493552809415671830" target="_blank" rel="noopener"
+       class="btn-primary px-4 py-2 rounded-full text-sm font-medium">Add to Discord</a>
+  </div>
+</header>
+
+<section class="max-w-3xl mx-auto px-6 pt-16 pb-10">
+  <p class="text-xs uppercase tracking-widest text-neutral-400">Legal</p>
+  <h1 class="mt-2 text-5xl font-extrabold tracking-tight">Privacy <span class="grad-text">Policy</span></h1>
+  <p class="mt-4 text-neutral-500 text-sm">Last updated: April 26, 2026</p>
+</section>
+
+<section class="max-w-3xl mx-auto px-6 pb-24 prose-lily">
+  <div class="panel rounded-2xl p-6 mb-8">
+    <p class="text-sm text-neutral-300 m-0">This policy explains what data <strong>Lily</strong> collects, why we collect it, how long we keep it, and the choices you have. We collect the minimum needed to operate the bot and dashboard.</p>
+  </div>
+
+  <h2>1. Data we collect</h2>
+
+  <h3>1.1 From Discord OAuth login (dashboard)</h3>
+  <p>When you click "Login with Discord" on the dashboard, Discord shares the following with us using the <code>identify</code> and <code>guilds</code> scopes:</p>
+  <table>
+    <tr><th>Field</th><th>Why we use it</th></tr>
+    <tr><td>Discord user ID</td><td>Identify your session</td></tr>
+    <tr><td>Username and global display name</td><td>Show "logged in as …" in the dashboard</td></tr>
+    <tr><td>Avatar hash</td><td>Display your avatar in the dashboard</td></tr>
+    <tr><td>List of servers (guilds) you are in, with your permissions and ownership</td><td>Show only the servers you can manage in the server picker</td></tr>
+    <tr><td>OAuth access &amp; refresh tokens</td><td>Maintain your session; never shown to anyone else</td></tr>
+  </table>
+  <p>We do NOT request your email address, your messages, your friends list, or any payment information.</p>
+
+  <h3>1.2 From server activity (bot)</h3>
+  <p>When Lily is in a server, it processes Discord events strictly as needed to deliver the features that server has enabled. Examples:</p>
+  <ul>
+    <li><strong>Moderation / Antinuke / Automod</strong> — message content, attachments, member join/leave events, role/channel changes, audit-log entries are inspected to detect rule violations or nuke attempts. Detected violations may be stored as case records (offender ID, moderator ID, reason, timestamp).</li>
+    <li><strong>Welcomer</strong> — new-member events trigger a welcome message; nothing about the message itself is retained.</li>
+    <li><strong>Tickets</strong> — channel IDs, ticket-opener IDs, and (optionally) chat transcripts are stored for the lifetime of the ticket / configured retention.</li>
+    <li><strong>Logs</strong> — when this module is enabled by a server admin, message edits/deletions, member joins/leaves, voice events, and role updates are forwarded to the channels chosen by that admin. We do not duplicate this data on our servers beyond what's needed to deliver the message.</li>
+    <li><strong>Music / Playlist</strong> — track titles and saved playlists are stored against your Discord user ID.</li>
+    <li><strong>Custom roles, J2C, Giveaways, Autoresponder, Server Config</strong> — only the configuration you provide (role IDs, channel IDs, prefixes, colors, etc.) is stored.</li>
+  </ul>
+
+  <h3>1.3 From the dashboard (in-browser)</h3>
+  <p>Your toggle states and field values entered in the dashboard are stored in your browser's <strong>localStorage</strong> under the key <code>lily.dashboard.v1</code>. They never leave your device unless and until you press a "Save to bot" action that explicitly synchronises a value.</p>
+
+  <h3>1.4 Operational logs</h3>
+  <p>Like any web service, our servers produce request logs containing IP address, timestamp, request path, status code and user-agent. These are kept for up to <strong>14 days</strong> for abuse-prevention and debugging, then deleted.</p>
+
+  <h2>2. How long we keep data</h2>
+  <table>
+    <tr><th>Data</th><th>Retention</th></tr>
+    <tr><td>OAuth session cookie</td><td>7 days, or until you log out</td></tr>
+    <tr><td>OAuth tokens server-side</td><td>Discarded when the session ends</td></tr>
+    <tr><td>Per-server configuration</td><td>Until the server removes Lily, or until manual deletion is requested</td></tr>
+    <tr><td>Moderation cases / warnings</td><td>Kept while the bot is in the server, or until the case is cleared by an admin</td></tr>
+    <tr><td>Operational request logs</td><td>≤ 14 days</td></tr>
+    <tr><td>Browser localStorage</td><td>Stays in your browser until you clear it</td></tr>
+  </table>
+
+  <h2>3. How we use your data</h2>
+  <ul>
+    <li>To deliver the features each server has enabled.</li>
+    <li>To keep the bot, dashboard, and your account secure (rate-limit abuse, detect raids, etc.).</li>
+    <li>To debug errors and improve reliability.</li>
+  </ul>
+  <p>We do <strong>not</strong> sell your data, share it with advertisers, or use it to build cross-service profiles.</p>
+
+  <h2>4. Who we share data with</h2>
+  <ul>
+    <li><strong>Discord</strong> — by definition, all bot traffic flows through Discord's APIs and is subject to <a href="https://discord.com/privacy" target="_blank" rel="noopener">Discord's Privacy Policy</a>.</li>
+    <li><strong>Hosting / infrastructure providers</strong> — used to run the bot and website. These providers process data on our behalf under their own confidentiality terms.</li>
+    <li>We may disclose information when legally required by a valid subpoena or court order.</li>
+  </ul>
+
+  <h2>5. Your rights and choices</h2>
+  <ul>
+    <li><strong>Access / correction / deletion</strong> — you may request a copy of, or deletion of, the data tied to your Discord user ID by contacting us in the <a href="https://discord.gg/RYY9SU4uj" target="_blank" rel="noopener">support server</a>. We will action verified requests within 30 days.</li>
+    <li><strong>Revoke OAuth</strong> — at any time you may revoke our access from your <a href="https://discord.com/developers/applications" target="_blank" rel="noopener">Discord Authorised Apps</a> page.</li>
+    <li><strong>Remove the bot</strong> — server owners can kick Lily at any time, which stops all event processing for that server.</li>
+    <li><strong>Clear local settings</strong> — clearing your browser site data removes the <code>lily.dashboard.v1</code> entry instantly.</li>
+  </ul>
+
+  <h2>6. Cookies</h2>
+  <p>We set a single first-party session cookie named <code>lily.sid</code> when you log in to the dashboard. It is HTTP-only, SameSite=Lax, and contains only a randomly generated session identifier. We do not use third-party tracking, advertising, or analytics cookies.</p>
+
+  <h2>7. Children</h2>
+  <p>Lily is not directed at children under the minimum age set by Discord for your jurisdiction (generally 13, or 16 in parts of the EU). We do not knowingly collect data from anyone below that age. If you believe we have, contact us and we will delete it.</p>
+
+  <h2>8. International transfers</h2>
+  <p>Our servers may be located outside your country. By using Lily you consent to your data being processed in jurisdictions that may have different data-protection laws than your own.</p>
+
+  <h2>9. Security</h2>
+  <p>We use HTTPS, modern session encryption, and least-privilege Discord scopes. No system is perfectly secure, but we work to protect your data and to disclose any verified breach without undue delay.</p>
+
+  <h2>10. Changes to this policy</h2>
+  <p>If we make material changes, we will update the "Last updated" date above and, where appropriate, post a notice in the support server.</p>
+
+  <h2>11. Contact</h2>
+  <p>For privacy questions or data requests, reach us in the <a href="https://discord.gg/RYY9SU4uj" target="_blank" rel="noopener">official support server</a>.</p>
+</section>
+
+<footer class="border-t border-white/5">
+  <div class="max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-neutral-500">
+    <div class="flex items-center gap-3">
+      <img src="/lily.png" alt="Lily" class="w-7 h-7 rounded-full" />
+      <span>© <span id="year"></span> lily</span>
+    </div>
+    <div class="flex flex-wrap gap-6">
+      <a href="/" class="hover:text-white transition">Home</a>
+      <a href="/commands" class="hover:text-white transition">Commands</a>
+      <a href="/dashboard" class="hover:text-white transition">Dashboard</a>
+      <a href="/terms" class="hover:text-white transition">Terms</a>
+      <a href="/privacy" class="hover:text-white transition">Privacy</a>
+      <a href="/premium" class="hover:text-white">Premium</a>
+      <a href="/premium" class="hover:text-white transition">Premium</a>
+      <a href="https://discord.gg/RYY9SU4uj" target="_blank" rel="noopener" class="hover:text-white transition">Support</a>
+    </div>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<!-- ===== Cookie / data consent ===== -->
+<div id="lily-consent" class="fixed bottom-4 inset-x-4 md:inset-x-auto md:right-6 md:bottom-6 md:max-w-md z-[60] hidden">
+  <div class="rounded-2xl border border-pink-500/30 bg-neutral-950/95 backdrop-blur-xl shadow-2xl shadow-pink-900/30 p-5">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-500 grid place-items-center text-lg shrink-0">🍪</div>
+      <div class="flex-1 min-w-0">
+        <h4 class="text-sm font-semibold text-white">Cookies &amp; data</h4>
+        <p class="mt-1 text-xs text-neutral-400 leading-relaxed">
+          We use one first-party session cookie (<code class="text-pink-300">lily.sid</code>) only when you sign in to the dashboard, and your dashboard preferences are stored in your browser's localStorage. No third-party tracking, ads, or analytics.
+          See our <a href="/privacy" class="text-pink-400 underline">Privacy Policy</a>.
+        </p>
+        <div class="mt-3 flex items-center gap-2">
+          <button id="lily-consent-accept" class="px-3 py-1.5 rounded-full text-xs font-semibold text-white" style="background:linear-gradient(90deg,#ec4899,#c084fc);">Accept</button>
+          <button id="lily-consent-decline" class="px-3 py-1.5 rounded-full text-xs font-medium text-neutral-300 border border-white/10 hover:bg-white/5">Decline</button>
+          <button id="lily-consent-close" aria-label="Close" class="ml-auto text-neutral-500 hover:text-white text-xl leading-none px-1">×</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var KEY='lily.consent.v1';
+  try { if(localStorage.getItem(KEY)) return; } catch(e){}
+  var el=document.getElementById('lily-consent'); if(!el) return;
+  setTimeout(function(){ el.classList.remove('hidden'); }, 400);
+  function set(v){ try{ localStorage.setItem(KEY, JSON.stringify({choice:v,ts:Date.now()})); }catch(e){} el.remove(); }
+  document.getElementById('lily-consent-accept').onclick=function(){ set('accepted'); };
+  document.getElementById('lily-consent-decline').onclick=function(){
+    try{ localStorage.removeItem('lily.dashboard.v1'); }catch(e){}
+    set('declined');
+  };
+  document.getElementById('lily-consent-close').onclick=function(){ set('dismissed'); };
+})();
+</script>
+
+</body>
+</html>
